@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --neon: #00f0ff; --neon2: #ff2d78; --dark: #080c14; --dark2: #0d1320; --card: #111827; --border: rgba(0,240,255,0.15); --text: #e0f0ff; --muted: #6b7fa3; }
+  body { background: var(--dark); color: var(--text); font-family: 'Rajdhani', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  .scanlines { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,240,255,0.015) 2px, rgba(0,240,255,0.015) 4px); pointer-events: none; z-index: 999; }
+  header { background: linear-gradient(180deg, #000 0%, var(--dark2) 100%); border-bottom: 1px solid var(--neon); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 0 30px rgba(0,240,255,0.08); }
+  .logo { font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 900; color: #fff; letter-spacing: 3px; text-shadow: 0 0 20px rgba(0,240,255,0.4); }
+  .logo .in { color: var(--neon); text-shadow: 0 0 20px rgba(0,240,255,0.7); }
+  .logo .formatics { color: var(--neon2); text-shadow: 0 0 20px rgba(255,45,120,0.6); }
+  .tagline { font-size: 11px; letter-spacing: 4px; color: var(--muted); text-transform: uppercase; margin-top: 3px; }
+  nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 4px; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1px; transition: all 0.2s; text-transform: uppercase; }
+  .nav-btn:hover, .nav-btn.active { border-color: var(--neon); color: var(--neon); background: rgba(0,240,255,0.05); box-shadow: 0 0 12px rgba(0,240,255,0.15); }
+  .hero { background: linear-gradient(135deg, var(--dark2) 0%, #0a0f1e 100%); padding: 3rem 2rem; text-align: center; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -50%; left: -50%; right: -50%; bottom: -50%; background: radial-gradient(ellipse at center, rgba(0,240,255,0.04) 0%, transparent 60%); pointer-events: none; }
+  .hero h1 { font-family: 'Orbitron', monospace; font-size: 38px; font-weight: 900; color: #fff; letter-spacing: 2px; text-shadow: 0 0 40px rgba(0,240,255,0.3); line-height: 1.2; }
+  .hero h1 .in { color: var(--neon); } .hero h1 .formatics { color: var(--neon2); }
+  .hero p { margin-top: 1rem; color: var(--muted); font-size: 16px; letter-spacing: 2px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; padding: 2rem; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--neon), transparent); opacity: 0; transition: opacity 0.25s; }
+  .card:hover { border-color: rgba(0,240,255,0.4); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,240,255,0.08); }
+  .card:hover::before { opacity: 1; }
+  .card-icon { font-size: 36px; margin-bottom: 1rem; display: block; }
+  .card-category { font-size: 10px; letter-spacing: 3px; color: var(--neon); text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+  .card-name { font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.4; }
+  .card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+  .card-specs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+  .spec-tag { background: rgba(0,240,255,0.06); border: 1px solid rgba(0,240,255,0.15); color: var(--neon); font-size: 10px; padding: 2px 8px; border-radius: 3px; letter-spacing: 1px; font-weight: 600; }
+  .bot-tag-low { background: rgba(0,240,255,0.06); border-color: rgba(0,240,255,0.3); color: #00f0ff; }
+  .bot-tag-mid { background: rgba(255,165,0,0.06); border-color: rgba(255,165,0,0.3); color: #ffa500; }
+  .bot-tag-big { background: rgba(255,45,120,0.06); border-color: rgba(255,45,120,0.3); color: #ff2d78; }
+  .price-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+  .price { font-family: 'Orbitron', monospace; font-size: 18px; font-weight: 700; color: var(--neon); text-shadow: 0 0 10px rgba(0,240,255,0.3); }
+  .price.hot { color: var(--neon2); text-shadow: 0 0 10px rgba(255,45,120,0.3); }
+  .buy-btn { background: linear-gradient(135deg, var(--neon), #0080ff); border: none; border-radius: 4px; color: #000; font-family: 'Orbitron', monospace; font-size: 10px; font-weight: 700; padding: 8px 16px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s; text-transform: uppercase; }
+  .buy-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,240,255,0.4); }
+  .buy-btn.bot-mid { background: linear-gradient(135deg, #ffa500, #ff6600); }
+  .buy-btn.bot-big { background: linear-gradient(135deg, var(--neon2), #9b00ff); color: #fff; }
+  .section-header { padding: 1.5rem 2rem 0.5rem; display: flex; align-items: center; gap: 16px; }
+  .section-title { font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700; color: var(--neon); letter-spacing: 3px; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--neon), transparent); opacity: 0.3; }
+  .badge-new { background: var(--neon2); color: #fff; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: 1px; position: absolute; top: 12px; right: 12px; }
+  .badge-hot { background: linear-gradient(135deg, #ffa500, #ff6600); color: #000; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: 1px; position: absolute; top: 12px; right: 12px; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #0d1320; border: 1px solid var(--neon); border-radius: 12px; padding: 2rem; max-width: 460px; width: 90%; box-shadow: 0 0 60px rgba(0,240,255,0.15); position: relative; }
+  .modal h2 { font-family: 'Orbitron', monospace; font-size: 16px; color: var(--neon); margin-bottom: 0.5rem; }
+  .modal .modal-product { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; }
+  .modal .modal-price { font-family: 'Orbitron', monospace; font-size: 24px; color: var(--neon2); margin-bottom: 1.5rem; text-shadow: 0 0 20px rgba(255,45,120,0.4); }
+  .paypal-btn { width: 100%; background: #003087; border: none; border-radius: 6px; color: #fff; padding: 14px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; transition: all 0.2s; }
+  .paypal-btn:hover { background: #0070ba; box-shadow: 0 4px 20px rgba(0,112,186,0.4); }
+  .paypal-note { margin-top: 1rem; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.6; }
+  .modal-close { position: absolute; top: 12px; right: 16px; background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; transition: color 0.2s; }
+  .modal-close:hover { color: var(--neon2); }
+  footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="scanlines"></div>
+<header>
+  <div>
+    <div class="logo"><span class="in">In</span><span class="formatics">Formatics</span></div>
+    <div class="tagline">// Tienda de Electrónica & Bots //</div>
+  </div>
+  <nav>
+    <button class="nav-btn active" onclick="filterSection('all',event)">Todo</button>
+    <button class="nav-btn" onclick="filterSection('phone',event)">Teléfonos</button>
+    <button class="nav-btn" onclick="filterSection('pc',event)">PCs</button>
+    <button class="nav-btn" onclick="filterSection('server',event)">Servidores</button>
+    <button class="nav-btn" onclick="filterSection('nas',event)">NAS</button>
+    <button class="nav-btn" onclick="filterSection('bot',event)">Bots Discord</button>
+  </nav>
+</header>
+<div class="hero">
+  <h1><span class="in">In</span><span class="formatics">Formatics</span></h1>
+  <p>// HARDWARE · SOFTWARE · BOTS · SERVIDORES //</p>
+</div>
+
+<div class="section-header" id="sec-phone"><span class="section-title">📱 Teléfonos</span><div class="section-line"></div></div>
+<div class="grid">
+  <div class="card" data-cat="phone"><span class="badge-new">NUEVO</span><span class="card-icon">📱</span><div class="card-category">Smartphone — Gama Alta</div><div class="card-name">ZENITH X Pro 5G</div><div class="card-desc">Pantalla AMOLED 6.7" 144Hz, cámara 200MP con IA, batería 5500mAh, carga 120W.</div><div class="card-specs"><span class="spec-tag">Snapdragon 8 Gen 3</span><span class="spec-tag">16GB RAM</span><span class="spec-tag">512GB</span><span class="spec-tag">5G</span></div><div class="price-row"><span class="price">€999</span><button class="buy-btn" onclick="openModal('ZENITH X Pro 5G','€999')">Comprar</button></div></div>
+  <div class="card" data-cat="phone"><span class="card-icon">📱</span><div class="card-category">Smartphone — Gama Media</div><div class="card-name">NOVA S8 Plus</div><div class="card-desc">Pantalla IPS 6.5" 90Hz, triple cámara 64MP, batería 4800mAh, carga 33W.</div><div class="card-specs"><span class="spec-tag">Dimensity 900</span><span class="spec-tag">8GB RAM</span><span class="spec-tag">256GB</span><span class="spec-tag">4G</span></div><div class="price-row"><span class="price">€349</span><button class="buy-btn" onclick="openModal('NOVA S8 Plus','€349')">Comprar</button></div></div>
+  <div class="card" data-cat="phone"><span class="badge-hot">OFERTA</span><span class="card-icon">📱</span><div class="card-category">Smartphone — Compacto</div><div class="card-name">MINI Alpha 5</div><div class="card-desc">Pantalla OLED 5.4", resistente al agua IP68, cámara principal 50MP, diseño premium.</div><div class="card-specs"><span class="spec-tag">A15 Bionic</span><span class="spec-tag">6GB RAM</span><span class="spec-tag">128GB</span></div><div class="price-row"><span class="price hot">€499</span><button class="buy-btn" onclick="openModal('MINI Alpha 5','€499')">Comprar</button></div></div>
+</div>
+
+<div class="section-header" id="sec-pc"><span class="section-title">💻 PCs & Portátiles</span><div class="section-line"></div></div>
+<div class="grid">
+  <div class="card" data-cat="pc"><span class="badge-new">NUEVO</span><span class="card-icon">🖥️</span><div class="card-category">PC Sobremesa — Gaming</div><div class="card-name">APEX RIFT Gaming Rig</div><div class="card-desc">Torre gaming con RTX 5090, refrigeración líquida AIO 360mm, chasis con ARGB.</div><div class="card-specs"><span class="spec-tag">i9-14900K</span><span class="spec-tag">RTX 5090</span><span class="spec-tag">64GB DDR5</span><span class="spec-tag">2TB NVMe</span></div><div class="price-row"><span class="price">€3.499</span><button class="buy-btn" onclick="openModal('APEX RIFT Gaming Rig','€3.499')">Comprar</button></div></div>
+  <div class="card" data-cat="pc"><span class="card-icon">💻</span><div class="card-category">Portátil — Workstation</div><div class="card-name">PRISM PRO 16 Studio</div><div class="card-desc">Portátil 16" 4K OLED, ideal para edición de vídeo, diseño 3D y desarrollo.</div><div class="card-specs"><span class="spec-tag">Ryzen 9 7945HX</span><span class="spec-tag">RTX 4080</span><span class="spec-tag">32GB DDR5</span><span class="spec-tag">1TB SSD</span></div><div class="price-row"><span class="price">€2.199</span><button class="buy-btn" onclick="openModal('PRISM PRO 16 Studio','€2.199')">Comprar</button></div></div>
+  <div class="card" data-cat="pc"><span class="card-icon">🖥️</span><div class="card-category">PC Sobremesa — Oficina</div><div class="card-name">CORE MINI Business</div><div class="card-desc">Mini PC silencioso, bajo consumo, perfecto para oficina y trabajo remoto todo el día.</div><div class="card-specs"><span class="spec-tag">i5-13600T</span><span class="spec-tag">16GB DDR4</span><span class="spec-tag">512GB NVMe</span><span class="spec-tag">Win 11 Pro</span></div><div class="price-row"><span class="price">€649</span><button class="buy-btn" onclick="openModal('CORE MINI Business','€649')">Comprar</button></div></div>
+</div>
+
+<div class="section-header" id="sec-server"><span class="section-title">🖧 Servidores</span><div class="section-line"></div></div>
+<div class="grid">
+  <div class="card" data-cat="server"><span class="card-icon">🗄️</span><div class="card-category">Servidor — Rack 1U</div><div class="card-name">IF SERVER R1-EDGE</div><div class="card-desc">Servidor compacto 1U para empresas pequeñas, bajo consumo, alta fiabilidad 24/7.</div><div class="card-specs"><span class="spec-tag">Xeon E-2400</span><span class="spec-tag">32GB ECC</span><span class="spec-tag">2x 1TB SSD</span><span class="spec-tag">IPMI</span></div><div class="price-row"><span class="price">€1.299</span><button class="buy-btn" onclick="openModal('IF SERVER R1-EDGE','€1.299')">Comprar</button></div></div>
+  <div class="card" data-cat="server"><span class="badge-hot">TOP VENTAS</span><span class="card-icon">🗄️</span><div class="card-category">Servidor — Rack 2U</div><div class="card-name">IF SERVER R2-PRO</div><div class="card-desc">Servidor dual-socket para virtualización y bases de datos exigentes. Alta disponibilidad.</div><div class="card-specs"><span class="spec-tag">2× Xeon Gold 6430</span><span class="spec-tag">256GB ECC</span><span class="spec-tag">8× 4TB HDD</span><span class="spec-tag">RAID</span></div><div class="price-row"><span class="price">€4.899</span><button class="buy-btn" onclick="openModal('IF SERVER R2-PRO','€4.899')">Comprar</button></div></div>
+  <div class="card" data-cat="server"><span class="card-icon">🗄️</span><div class="card-category">Servidor — GPU Compute</div><div class="card-name">IF AI NODE H100</div><div class="card-desc">Nodo de computación IA con GPUs NVIDIA H100. Para machine learning e inferencia.</div><div class="card-specs"><span class="spec-tag">2× NVIDIA H100</span><span class="spec-tag">512GB ECC</span><span class="spec-tag">NVLink</span><span class="spec-tag">10GbE</span></div><div class="price-row"><span class="price">€24.999</span><button class="buy-btn" onclick="openModal('IF AI NODE H100','€24.999')">Comprar</button></div></div>
+</div>
+
+<div class="section-header" id="sec-nas"><span class="section-title">💾 NAS — Almacenamiento</span><div class="section-line"></div></div>
+<div class="grid">
+  <div class="card" data-cat="nas"><span class="card-icon">💾</span><div class="card-category">NAS — Home</div><div class="card-name">VAULTBOX DUO 2-Bay</div><div class="card-desc">NAS doméstico de 2 bahías, perfecto para backup personal, Plex y nube privada.</div><div class="card-specs"><span class="spec-tag">2 Bahías</span><span class="spec-tag">4GB RAM</span><span class="spec-tag">RAID 0/1</span><span class="spec-tag">2× USB 3.0</span></div><div class="price-row"><span class="price">€229</span><button class="buy-btn" onclick="openModal('VAULTBOX DUO 2-Bay','€229')">Comprar</button></div></div>
+  <div class="card" data-cat="nas"><span class="badge-new">NUEVO</span><span class="card-icon">💾</span><div class="card-category">NAS — Business</div><div class="card-name">VAULTBOX PRO 8-Bay</div><div class="card-desc">NAS empresarial de 8 bahías con 10GbE, snapshots y replicación offsite.</div><div class="card-specs"><span class="spec-tag">8 Bahías</span><span class="spec-tag">8GB ECC</span><span class="spec-tag">10GbE</span><span class="spec-tag">RAID 5/6/10</span></div><div class="price-row"><span class="price">€899</span><button class="buy-btn" onclick="openModal('VAULTBOX PRO 8-Bay','€899')">Comprar</button></div></div>
+  <div class="card" data-cat="nas"><span class="card-icon">💾</span><div class="card-category">NAS — Enterprise</div><div class="card-name">VAULTBOX ULTRA 24-Bay</div><div class="card-desc">Solución enterprise de 24 bahías con SSD caché, redundancia de fuentes y failover.</div><div class="card-specs"><span class="spec-tag">24 Bahías</span><span class="spec-tag">32GB ECC</span><span class="spec-tag">25GbE</span><span class="spec-tag">Dual PSU</span></div><div class="price-row"><span class="price">€3.199</span><button class="buy-btn" onclick="openModal('VAULTBOX ULTRA 24-Bay','€3.199')">Comprar</button></div></div>
+</div>
+
+<div class="section-header" id="sec-bot"><span class="section-title">🤖 Bots de Discord</span><div class="section-line"></div></div>
+<div class="grid">
+  <div class="card" data-cat="bot"><span class="card-icon">🤖</span><div class="card-category">Bot Discord — Tier LOW</div><div class="card-name">IF BOT · BASIC</div><div class="card-desc">Bot básico con comandos de moderación, bienvenida automática, roles y logs de servidor.</div><div class="card-specs"><span class="spec-tag bot-tag-low">LOW TIER</span><span class="spec-tag">Mod & Roles</span><span class="spec-tag">Bienvenidas</span><span class="spec-tag">Logs</span></div><div class="price-row"><span class="price">€15/mes</span><button class="buy-btn" onclick="openModal('IF BOT · BASIC (LOW)','€15/mes')">Contratar</button></div></div>
+  <div class="card" data-cat="bot"><span class="badge-hot">MÁS POPULAR</span><span class="card-icon">🤖</span><div class="card-category">Bot Discord — Tier MID</div><div class="card-name">IF BOT · PRO</div><div class="card-desc">Bot avanzado con economía, música, niveles XP, anti-raid, tickets y estadísticas.</div><div class="card-specs"><span class="spec-tag bot-tag-mid">MID TIER</span><span class="spec-tag">Economía</span><span class="spec-tag">Música</span><span class="spec-tag">Niveles XP</span><span class="spec-tag">Tickets</span></div><div class="price-row"><span class="price hot">€45/mes</span><button class="buy-btn bot-mid" onclick="openModal('IF BOT · PRO (MID)','€45/mes')">Contratar</button></div></div>
+  <div class="card" data-cat="bot"><span class="badge-new">PREMIUM</span><span class="card-icon">🤖</span><div class="card-category">Bot Discord — Tier BIG</div><div class="card-name">IF BOT · ELITE</div><div class="card-desc">Bot enterprise personalizado con IA integrada, panel web, comandos slash custom, soporte 24/7 y hosting dedicado.</div><div class="card-specs"><span class="spec-tag bot-tag-big">BIG TIER</span><span class="spec-tag">IA Integrada</span><span class="spec-tag">Panel Web</span><span class="spec-tag">Soporte 24/7</span></div><div class="price-row"><span class="price hot">€120/mes</span><button class="buy-btn bot-big" onclick="openModal('IF BOT · ELITE (BIG)','€120/mes')">Contratar</button></div></div>
+</div>
+
+<footer>
+  <div style="font-family:'Orbitron',monospace; font-size:16px; font-weight:900; margin-bottom:8px;">
+    <span style="color:var(--neon);">In</span><span style="color:var(--neon2);">Formatics</span>
+  </div>
+  <p>© 2025 InFormatics — Pago seguro vía PayPal</p>
+  <p style="margin-top:6px; color:#334155; font-size:11px;">paypal.me/DEVraler · Envíos a toda España · Soporte por Discord</p>
+</footer>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2>Confirmar pedido</h2>
+    <div class="modal-product" id="modal-product-name">Producto</div>
+    <div class="modal-price" id="modal-price">€0</div>
+    <button class="paypal-btn" onclick="goPaypal()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106z" fill="#003087"/><path d="M19.16 5.535c-.996 5.119-4.342 6.853-8.628 6.853H8.337c-.524 0-.968.383-1.05.901L5.97 21.337H2.47a.641.641 0 0 1-.633-.74l.052-.33 3.18-20.366H5.998c.524 0 .972.382 1.05.9" fill="#0070ba"/></svg>
+      Pagar con PayPal
+    </button>
+    <p class="paypal-note">Serás redirigido a PayPal para completar el pago de forma segura.<br>
+    <strong style="color:var(--neon);">paypal.me/DEVraler</strong></p>
+  </div>
+</div>
+
+<script>
+  let currentProduct = '', currentPrice = '';
+  function openModal(name, price) {
+    currentProduct = name; currentPrice = price;
+    document.getElementById('modal-product-name').textContent = name;
+    document.getElementById('modal-price').textContent = price;
+    document.getElementById('modal').classList.add('open');
+  }
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  function goPaypal() {
+    const a = document.createElement('a');
+    a.href = 'https://www.paypal.com/paypalme/DEVraler';
+    a.target = '_blank'; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }
+  document.getElementById('modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+  function filterSection(cat, e) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    if (e && e.target) e.target.classList.add('active');
+    document.querySelectorAll('.card').forEach(c => { c.style.display = (cat === 'all' || c.dataset.cat === cat) ? '' : 'none'; });
+    ['phone','pc','server','nas','bot'].forEach(s => {
+      const el = document.getElementById('sec-' + s);
+      if (el) el.style.display = (cat === 'all' || cat === s) ? '' : 'none';
+    });
+  }
+</script>
+</body>
+</html>
